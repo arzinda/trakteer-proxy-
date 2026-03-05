@@ -10,7 +10,7 @@ app.get('/top', async (req, res) => {
     const response = await axios.get(
       'https://api.trakteer.id/v1/public/supports',
       {
-        params: { limit: 100, page: 1 },
+        params: { limit: 25, page: 1 },
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ app.get('/top', async (req, res) => {
   }
 });
 
-// Endpoint debug — buka /debug di browser untuk cek raw response
+// Endpoint debug
 app.get('/debug', async (req, res) => {
   try {
     const response = await axios.get(
