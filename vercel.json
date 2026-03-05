@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/top", "dest": "/api/top" },
+    { "src": "/latest", "dest": "/api/latest" }
+  ]
+}
