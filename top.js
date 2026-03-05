@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const TRAKTEER_KEY = 'PASTE_API_KEY_DISINI';
+const TRAKTEER_KEY = 'trapi-NLnWWAom6d7NLiUbBI2Y20mv';
 
 const DUMMY_DATA = [
   { rank: 1, name: "Belum ada donasi", amount: 0, currency: "Rp" }
