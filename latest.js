@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const TRAKTEER_KEY = 'PASTE_API_KEY_DISINI';
+const TRAKTEER_KEY = 'trapi-NLnWWAom6d7NLiUbBI2Y20mv';
 
 // Simpan di memory (reset tiap cold start, tapi cukup untuk deteksi donasi baru)
 let lastOrderIds = new Set();
