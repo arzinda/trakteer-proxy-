@@ -5,6 +5,11 @@ const app = express();
 // ⚠️ GANTI DENGAN API KEY TRAKTEER KAMU
 const TRAKTEER_KEY = 'trapi-NLnWWAom6d7NLiUbBI2Y20mv';
 
+// Data dummy — tampil saat belum ada donasi masuk
+const DUMMY_DATA = [
+  { rank: 1, name: "Belum ada donasi", amount: 0, currency: "Rp" }
+];
+
 app.get('/top', async (req, res) => {
   try {
     const response = await axios.get(
@@ -21,11 +26,16 @@ app.get('/top', async (req, res) => {
     );
 
     const items = response.data?.result?.data || [];
-    const totals = {};
 
+    // Kalau belum ada donasi, return dummy
+    if (items.length === 0) {
+      return res.json(DUMMY_DATA);
+    }
+
+    const totals = {};
     items.forEach(tx => {
-      if (tx.status !== 'success') return;
-      const name = tx.creator_name || 'Anonim';
+      // Ambil semua status (tidak filter) karena Trakteer sudah filter otomatis
+      const name = tx.creator_name || tx.supporter_name || 'Anonim';
       totals[name] = (totals[name] || 0) + (tx.amount || 0);
     });
 
@@ -35,7 +45,7 @@ app.get('/top', async (req, res) => {
       .map((entry, i) => ({ ...entry, rank: i + 1 }))
       .slice(0, 10);
 
-    res.json(sorted);
+    res.json(sorted.length > 0 ? sorted : DUMMY_DATA);
 
   } catch (e) {
     res.status(500).json({
@@ -46,7 +56,6 @@ app.get('/top', async (req, res) => {
   }
 });
 
-// Endpoint debug
 app.get('/debug', async (req, res) => {
   try {
     const response = await axios.get(
@@ -75,3 +84,11 @@ app.get('/', (req, res) => res.send('✅ Trakteer Proxy aktif!'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server jalan di port ${PORT}`));
+
+
+
+
+
+
+
+
