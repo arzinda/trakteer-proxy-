@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
     const response = await axios.get(
       'https://api.trakteer.id/v1/public/supports',
       {
-        params: { limit: 100, page: 1 },
+        params: { limit: 25, page: 1 },
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
