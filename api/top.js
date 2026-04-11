@@ -1,5 +1,5 @@
 const axios = require('axios');
-const TRAKTEER_KEY = process.env.TRAKTEER_KEY; // ← ambil dari env, bukan hardcode
+const TRAKTEER_KEY = process.env.TRAKTEER_KEY;
 
 const DUMMY_DATA = [
   { rank: 1, name: "Belum ada donasi", amount: 0, currency: "Rp" }
@@ -23,16 +23,30 @@ module.exports = async (req, res) => {
     const items = response.data?.result?.data || [];
     if (items.length === 0) return res.json(DUMMY_DATA);
 
+    // Aggregate by supporter_id (paling akurat)
     const totals = {};
     items.forEach(tx => {
-      const name = tx.creator_name || tx.supporter_name || 'Anonim';
-      totals[name] = (totals[name] || 0) + (tx.amount || 0);
+      // Gunakan supporter_id sebagai key unik, fallback ke email, lalu nama
+      const uid  = tx.supporter_id || tx.supporter_email || tx.supporter_name || 'Anonim';
+      const name = tx.creator_name  || tx.supporter_name || 'Anonim';
+
+      if (!totals[uid]) {
+        totals[uid] = { name, amount: 0 };
+      }
+
+      // Selalu pakai nama terbaru yang dipakai donor
+      totals[uid].name   = name;
+      totals[uid].amount += (tx.amount || 0);
     });
 
-    const sorted = Object.entries(totals)
-      .map(([name, amount]) => ({ name, amount, currency: 'Rp' }))
+    const sorted = Object.values(totals)
       .sort((a, b) => b.amount - a.amount)
-      .map((entry, i) => ({ ...entry, rank: i + 1 }))
+      .map((entry, i) => ({
+        rank: i + 1,
+        name: entry.name,
+        amount: entry.amount,
+        currency: 'Rp'
+      }))
       .slice(0, 20);
 
     res.json(sorted.length > 0 ? sorted : DUMMY_DATA);
